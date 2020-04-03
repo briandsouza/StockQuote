@@ -7,12 +7,12 @@ import sys
 req.disable_warnings()
 
 def ConnectToService(cmpname, apikey):
-    print ("-----------------------------Connecting---------------------------------------")
-    conn_url = 'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=' + cmpname + '&apikey=' + apikey
+    #print ("-----------------------------Connecting---------------------------------------")
+    conn_url = 'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=TSE:' + cmpname + '&apikey=' + apikey
     con = req.PoolManager()
     resp = con.request('GET', conn_url)
     soup = bs(resp.data, 'html.parser')
-    print ("---------------------------Quote Received----------------------------------------")
+    #print ("---------------------------Quote Received----------------------------------------")
     resp.close()
     resp.release_conn()
     return soup
@@ -26,11 +26,11 @@ def FormatData(soup):
     return write_array
 
 def AppendToFile(write_array):
-    print ("---------------------Saving Output to File--------------------------")
-    with open('StockQuotes.csv', 'a') as fd:
+    #print ("---------------------Saving Output to File--------------------------")
+    with open('StockQuotes.csv', 'a', newline='') as fd:
         writer = csv.writer(fd)
         writer.writerow(write_array)    
-    print ("-----------------------Finished Writing File------------------------")
+    #print ("-----------------------Finished Writing File------------------------")
 
 def CloseConToService(resp):
     resp.close()
@@ -38,6 +38,9 @@ def CloseConToService(resp):
 if __name__ == "__main__":
     #To Do
     #Need to sanitize the URL and arguments
-    soup = ConnectToService(str(sys.argv[1]),str(sys.argv[2]))
-    aray = FormatData(soup)
-    AppendToFile(aray)
+    TickerCodeList = {'VEQT', 'VAB', 'VGRO', 'XGRO'}
+    for TickerCodes in TickerCodeList:
+        soup = ConnectToService(TickerCodes,str(sys.argv[1]))
+        aray = FormatData(soup)
+        AppendToFile(aray)
+        print ("end")
